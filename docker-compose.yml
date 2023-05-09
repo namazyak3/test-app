@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  client:
+    build:
+      context: ./client
+    container_name: client
+    tty: true
+    ports:
+      - 3000:3000
+    env_file:
+      .env
+    depends_on:
+      server:
+        condition: service_started
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: server
+    tty: true
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_started
+
+  db:
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    container_name: db
+    tty: true
+    ports:
+      - 3306:3306
+    env_file:
+      - .env
+    volumes:
+      - ./db/my.conf:/etc/mysql/conf.d/my.cnf
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
