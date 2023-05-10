@@ -1,4 +1,4 @@
-module github.com/namzyak3/test-app/server
+module github.com/namazyak3/test-app/server
 
 go 1.20
 
