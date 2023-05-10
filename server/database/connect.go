@@ -7,27 +7,28 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-
-	"github.com/namazyak3/test-app/server/config"
+	"github.com/namazyak3/test-app/server/configs"
 )
 
-func ConnectDB(env config.EnvType) {
-	//dbconf := env.MYSQL_USER + ":" + env.MYSQL_PASSWORD + "@tcp(" + env.MYSQL_HOST + ":" + env.MYSQL_PORT + ")/" + env.MYSQL_DATABASE
-	//↑これはまだできてない.
+var DB *sql.DB
+var err error
 
-	dbconf := "root:rootpass@tcp(" + env.MYSQL_HOST + ":" + env.MYSQL_TCP_PORT + ")/" + env.MYSQL_DATABASE
-	fmt.Printf("アクセス中: %s\n", "root")
-	db, err := sql.Open("mysql", dbconf)
+func ConnectDB(env configs.EnvType) *sql.DB {
+	dbconf := env.MYSQL_USER + ":" + env.MYSQL_PASSWORD + "@tcp(" + env.MYSQL_HOST + ":" + env.MYSQL_TCP_PORT + ")/" + env.MYSQL_DATABASE
+
+	//dbconf := "root:rootpass@tcp(" + env.MYSQL_HOST + ":" + env.MYSQL_TCP_PORT + ")/" + env.MYSQL_DATABASE
+	fmt.Printf("アクセス中: %s\n", env.MYSQL_USER)
+	DB, err = sql.Open("mysql", dbconf)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	defer db.Close()
+	defer DB.Close()
 
 	try := 0
 	for try <= 10 {
 		time.Sleep(3 * time.Second)
-		err := db.Ping()
+		err := DB.Ping()
 
 		if err == nil {
 			fmt.Println("データベース接続成功")
@@ -41,4 +42,6 @@ func ConnectDB(env config.EnvType) {
 
 		try++
 	}
+
+	return DB
 }
