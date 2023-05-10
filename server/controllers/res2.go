@@ -5,6 +5,6 @@ import (
 	"net/http"
 )
 
-func Handler2(w http.ResponseWriter, _ *http.Request) {
+func Res2(w http.ResponseWriter, _ *http.Request) {
 	io.WriteString(w, "response 2")
 }
